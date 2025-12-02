@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.http import JsonResponse
 from .models import Trip, Booking, ChatMessage, UserProfile
 from .forms import ContactForm
+from .locations import KENYA_LOCATIONS
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -221,3 +223,19 @@ def remove_unpaid_bookings():
     unpaid_bookings = Booking.objects.filter(deposit_paid=False, pay_later_deadline__lt=now)
     for booking in unpaid_bookings:
         booking.delete()
+
+
+# API endpoints for location data
+def api_counties(request):
+    """Return list of all Kenyan counties."""
+    counties = sorted(KENYA_LOCATIONS.keys())
+    return JsonResponse({'counties': counties})
+
+
+def api_constituencies(request):
+    """Return constituencies for a given county."""
+    county = request.GET.get('county', '')
+    if county and county in KENYA_LOCATIONS:
+        constituencies = KENYA_LOCATIONS[county]
+        return JsonResponse({'constituencies': constituencies})
+    return JsonResponse({'constituencies': [], 'error': 'County not found'}, status=400)

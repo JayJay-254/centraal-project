@@ -16,4 +16,7 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile_page, name='edit_profile'),
     path('destinations/', views.destinations_page, name='destinations_page'),
     path('notification-demo/', views.notification_demo, name='notification_demo'),
+    # Location API endpoints
+    path('api/counties/', views.api_counties, name='api_counties'),
+    path('api/constituencies/', views.api_constituencies, name='api_constituencies'),
 ]

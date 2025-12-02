@@ -6,3 +6,5 @@ whitenoise
 dj-database-url
 psycopg2-binary
 django-crontab
+django-storages[boto3]
+boto3

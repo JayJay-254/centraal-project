@@ -1,79 +1,75 @@
 # Deployment to Render (example)
 
-This document explains how to deploy the Central Adventures Django app to Render.com.
+This document explains how to deploy the Central Adventures Django app to Render.com with a managed database and S3 media storage.
 
 Quick summary
-- Use the provided `render.yaml` or set the Render web service `Start Command` to:
+- Use the provided `render.yaml` or manually set Render web service `Start Command` to:
 
 ```
 gunicorn central_adventures.wsgi:application --bind 0.0.0.0:$PORT
 ```
 
-- Ensure `requirements.txt` contains `gunicorn`, `whitenoise`, and any DB driver (e.g. `psycopg2-binary`) — this repo already lists them.
-- Set the `DJANGO_SETTINGS_MODULE` environment variable to `central_adventures.settings` (the `render.yaml` already does this).
-- Provide a secure `SECRET_KEY` in Render's environment variables (do not keep the development key in production).
-- Set `DEBUG` to `False` in Render env vars.
-- Configure `DATABASE_URL` (Render Postgres) and other secrets in Render env vars.
+- Set environment variables on Render:
+  - `SECRET_KEY` (a secure generated key)
+  - `DEBUG = False`
+  - `ALLOWED_HOSTS = your-render-domain.onrender.com` (or use render's auto-generated domain)
+  - `DATABASE_URL` (Render's managed Postgres — auto-provided if you attach a database)
+  - (Optional) AWS S3 credentials if you want persistent media storage
 
-Render (service) example
-1. Create a new Web Service on Render, connect the repository and choose the `main` branch.
-2. Either add the `render.yaml` at the repository root (already included) or set the following fields in the Render UI:
-   - Environment: `Python`
-   - Build Command: `pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput`
-   - Start Command: `gunicorn central_adventures.wsgi:application --bind 0.0.0.0:$PORT`
-   - Environment Variables:
-     - `DJANGO_SETTINGS_MODULE = central_adventures.settings`
-     - `SECRET_KEY = <your-secret-here>`
-     - `DEBUG = False`
-     - `DATABASE_URL = postgres://...` (Render can provide this when you add a managed Postgres instance)
+Render deployment steps
+1. Push your code to GitHub (main branch).
+2. Go to render.com and create a new Web Service.
+3. Connect your GitHub repo and select the `main` branch.
+4. In the service settings:
+   - **Name**: central-adventures
+   - **Environment**: Python
+   - **Build Command**: `pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput`
+   - **Start Command**: `gunicorn central_adventures.wsgi:application --bind 0.0.0.0:$PORT`
+   - **Plan**: Free (or paid if desired)
 
-Static files and WhiteNoise
-- `whitenoise` is listed in `requirements.txt`. To use it in production make sure you:
-  1. Add `WhiteNoiseMiddleware` to `MIDDLEWARE` (below `SecurityMiddleware`).
-  2. Set a `STATIC_ROOT` in your `settings.py` and run `collectstatic`.
+5. Add environment variables (click "Environment"):
+   - `DEBUG = False`
+   - `SECRET_KEY = <your-secret-key>` (use a secure generated value, NOT the dev key)
+   - `ALLOWED_HOSTS = *` (or restrict to your domain: `yourdomain.onrender.com`)
 
-Recommended production snippets for `central_adventures/settings.py` (do NOT paste your SECRET_KEY):
+6. (Optional) Add a PostgreSQL database:
+   - Click "Database" in Render and create a managed PostgreSQL instance.
+   - Render will auto-set `DATABASE_URL` in the web service environment.
+   - No manual `DATABASE_URL` env var needed if you link a database.
 
-```python
-import os
-from pathlib import Path
-import dj_database_url
+7. Deploy — Render runs the build command (migrations + collectstatic) and starts the web service.
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+Environment variables explained
+- `SECRET_KEY`: Django secret key. Generate a new one (do NOT use the development key in the code). Use `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` to generate one.
+- `DEBUG = False`: Disables debug mode (required for production).
+- `ALLOWED_HOSTS`: Comma-separated list of domain names the app responds to. Set to your Render domain or `*` (less secure but simpler for testing).
+- `DATABASE_URL`: Auto-set by Render if you attach a Postgres instance. Format: `postgres://user:pass@host:port/dbname`.
 
-# Read secret and debug from env
-SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-for-local')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+S3 media storage (optional)
+- By default, media uploads (user profile images, gallery images) are stored on Render's ephemeral filesystem (lost on redeploy).
+- To persist media uploads, use AWS S3. Add these environment variables on Render:
+  - `AWS_ACCESS_KEY_ID`: Your AWS access key.
+  - `AWS_SECRET_ACCESS_KEY`: Your AWS secret key.
+  - `AWS_STORAGE_BUCKET_NAME`: Your S3 bucket name.
+  - `AWS_S3_REGION_NAME`: AWS region (e.g., `us-east-1`).
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+Once set, all media uploads go to S3 and persist across redeployments.
 
-# Static files (production)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+Troubleshooting
+- **"django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty"** — Set `SECRET_KEY` env var on Render.
+- **"ValueError: settings.DATABASES is improperly configured"** — If using Postgres, ensure `DATABASE_URL` is set (auto-done if you attach a Render database).
+- **Static files 404** — Ensure `collectstatic` ran during build. Check build logs on Render.
+- **Media uploads not persisting** — Use S3 (add AWS env vars) or Render's persistent disk feature.
 
-# Whitenoise (after SecurityMiddleware)
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    # ... rest of middleware
-]
+Render.yaml (alternative)
+Instead of manual settings, you can use the included `render.yaml` file. However, you must still set secret environment variables in the Render dashboard (they cannot be in the YAML file for security).
 
-# Use dj-database-url to parse DATABASE_URL when provided
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+Testing locally before deploy
+- Run `python manage.py runserver` and test signup/login/admin flows.
+- Test admin at `http://localhost:8000/admin/` (use superuser credentials).
+- Verify static files load and profile/gallery image uploads work.
+- Run `python manage.py check` to catch any configuration issues.
 
-# Enable WhiteNoise compressed manifest static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-```
-
-Deployment checklist
-- Add/ensure `SECRET_KEY`, `DATABASE_URL`, `DEBUG` env vars on Render.
-- Attach a managed Postgres and set `DATABASE_URL` to the provided URL.
-- Run a deploy — Render will run the `buildCommand` (migrations + collectstatic).
-- Verify logs in Render; common follow-ups:
-  - `ValueError: settings.DATABASES is improperly configured` → check `DATABASE_URL`.
-  - `django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty` → set `SECRET_KEY`.
-  - Static files 404s → ensure `collectstatic` ran and `STATIC_ROOT` is configured.
-
-If you want, I can add the `whitenoise` middleware lines directly to `settings.py` and set `STATIC_ROOT` and `STATICFILES_STORAGE` for you — tell me and I'll patch `central_adventures/settings.py` and run a quick local `collectstatic` to make sure nothing breaks.
+Further reading
+- Render docs: https://render.com/docs
+- Django deployment checklist: https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

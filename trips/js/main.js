@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Send email using EmailJS
             if (typeof emailjs !== 'undefined') {
-                emailjs.send('service_t9bdrid', 'service_t9bdrid', templateParams)
+                emailjs.send('service_t9bdrid', 'template_jq7oqec', templateParams)
                     .then(function(response) {
                         showSuccess('Message sent successfully! We\'ll get back to you soon.');
                         contactForm.reset();

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Edit Profile - Central Adventures{% endblock %}
+{% block content %}
+<section class="edit-profile-section container-small">
+    <h2 class="page-title">Edit Profile</h2>
+    <p class="page-subtitle">Update your account information</p>
+
+    <form id="editProfileForm" class="profile-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Profile Picture -->
+        <div class="form-group">
+            <label for="editProfilePicture">Profile Picture</label>
+            {% if profile.profile_picture %}
+                <div class="current-image">
+                    <img src="{{ profile.profile_picture.url }}" alt="Profile image" class="profile-img" />
+                </div>
+            {% endif %}
+            <input type="file" id="editProfilePicture" name="profile_picture" accept="image/*">
+            <div id="editImagePreview" class="image-preview"></div>
+        </div>
+
+        <!-- Name Fields -->
+        <div class="form-row">
+                <div class="form-group">
+                    <label for="editFirstName">First Name *</label>
+                    <input type="text" id="editFirstName" name="firstName" required value="{{ user.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="editLastName">Last Name *</label>
+                    <input type="text" id="editLastName" name="lastName" required value="{{ user.last_name }}">
+                </div>
+        </div>
+
+        <!-- Username and Age -->
+        <div class="form-row">
+                <div class="form-group">
+                    <label for="editUsername">Username *</label>
+                    <input type="text" id="editUsername" name="username" required value="{{ user.username }}">
+                </div>
+                <div class="form-group">
+                    <label for="editAge">Age *</label>
+                    <input type="number" id="editAge" name="age" required min="18" max="100" value="{{ profile.age }}">
+                </div>
+        </div>
+
+        <!-- Email -->
+            <div class="form-group">
+                <label for="editEmail">Email *</label>
+                <input type="email" id="editEmail" name="email" required value="{{ user.email }}">
+            </div>
+
+        <!-- County -->
+            <div class="form-group">
+                <label for="editCounty">County *</label>
+                <select id="editCounty" name="county" required>
+                    <option value="">Select your county</option>
+                    {% if profile.county %}
+                        <option value="{{ profile.county }}" selected>{{ profile.county }}</option>
+                    {% endif %}
+                </select>
+            </div>
+
+        <!-- Constituency -->
+            <div class="form-group">
+                <label for="editConstituency">Constituency *</label>
+                <select id="editConstituency" name="constituency" required>
+                    <option value="">Select your constituency</option>
+                    {% if profile.constituency %}
+                        <option value="{{ profile.constituency }}" selected>{{ profile.constituency }}</option>
+                    {% endif %}
+                </select>
+            </div>
+
+        <!-- Bio -->
+            <div class="form-group">
+                <label for="editBio">Bio</label>
+                <textarea id="editBio" name="bio" rows="4" placeholder="Tell us about yourself...">{{ profile.bio }}</textarea>
+            </div>
+
+        <!-- Contact Info -->
+            <div class="form-group">
+                <label for="editContactInfo">Contact Info</label>
+                <input type="text" id="editContactInfo" name="contactInfo" placeholder="Phone or other contact" value="{{ profile.contact_info }}">
+            </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'trips' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+    <script src="{% static 'js/profile-preview.js' %}"></script>
+{% endblock %}

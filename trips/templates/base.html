@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Central Adventures{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'images/styles/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'images/styles/css/notifications.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="site-root">
+    <header class="main-header">
+        <div class="header-content container">
+            <a class="site-title" href="{% url 'home' %}">Central Adventures</a>
+            <nav class="main-nav">
+                <a href="{% url 'trips' %}" class="nav-link">Bookings</a>
+                <a href="{% url 'gallery' %}" class="nav-link">Gallery</a>
+                <a href="{% url 'contact_us' %}" class="nav-link">Contacts</a>
+            </nav>
+            <div class="user-nav">
+                {% if user.is_authenticated %}
+                    {% if user.profile.profile_picture %}
+                        <a href="{% url 'edit_profile' %}" class="nav-link"><img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="nav-avatar" /></a>
+                    {% endif %}
+                    <a href="{% url 'edit_profile' %}" class="nav-link">Profile</a>
+                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                {% else %}
+                    {% comment %} <a href="{% url 'login' %}" class="nav-link">Login</a> {% endcomment %}
+                    <a href="{% url 'signup' %}" class="nav-link">Sign up</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% if messages %}
+            <div class="messages container">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Central Adventures</h4>
+                    <p>Explore Kenya's Beauty</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email:centraladventurers@gmail.com</p>
+                    <p>Phone: +254 740 596 569</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Central Adventures. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

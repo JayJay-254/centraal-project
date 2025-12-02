@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block title %}Notification System Demo - Central Adventures{% endblock %}
+{% block extra_head %}
+    <style>
+        .demo-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        .demo-title {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.5rem;
+            color: var(--earth-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 30px 0;
+        }
+        .demo-section h3 {
+            font-family: 'Montserrat', Arial, sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="demo-container">
+        <h1 class="demo-title">🎨 Notification System Demo</h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">
+            Test all the custom notifications and popups used throughout Central Adventures
+        </p>
+
+        <!-- Toast Notifications -->
+        <div class="demo-section">
+            <h3>📢 Toast Notifications</h3>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                Small notifications that appear in the top-right corner and auto-dismiss
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary btn-small" onclick="showSuccess('Operation completed successfully!')">
+                    Success Notification
+                </button>
+                <button class="btn btn-primary btn-small" onclick="showError('Something went wrong. Please try again.')">
+                    Error Notification
+                </button>
+                <button class="btn btn-primary btn-small" onclick="showWarning('Please review your information before continuing.')">
+                    Warning Notification
+                </button>
+                <button class="btn btn-primary btn-small" onclick="showInfo('Here is some helpful information for you.')">
+                    Info Notification
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Popups -->
+        <div class="demo-section">
+            <h3>💬 Modal Popups</h3>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                Full-screen modals with custom icons and messages
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-secondary btn-small" onclick="showSuccessModal()">
+                    Success Modal
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="showErrorModal()">
+                    Error Modal
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="showWarningModal()">
+                    Warning Modal
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="showInfoModal()">
+                    Info Modal
+                </button>
+            </div>
+        </div>
+
+        <!-- Confirmation Dialog -->
+        <div class="demo-section">
+            <h3>❓ Confirmation Dialog</h3>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                Ask users to confirm actions before proceeding
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary" onclick="showConfirmDialog()">
+                    Show Confirmation
+                </button>
+            </div>
+        </div>
+
+        <!-- Real-World Examples -->
+        <div class="demo-section">
+            <h3>🌍 Real-World Examples</h3>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">
+                See how notifications are used in the actual application
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-secondary" onclick="simulateLogin()">
+                    Login Success
+                </button>
+                <button class="btn btn-secondary" onclick="simulateSignup()">
+                    Signup Success
+                </button>
+                <button class="btn btn-secondary" onclick="simulateProfileUpdate()">
+                    Profile Updated
+                </button>
+                <button class="btn btn-secondary" onclick="simulateContact()">
+                    Message Sent
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script>
+        // Modal examples
+        function showSuccessModal() {
+            showModal({
+                title: 'Great Success!',
+                message: 'Your action has been completed successfully.',
+                type: 'success',
+                confirmText: 'Awesome!'
+            });
+        }
+
+        function showErrorModal() {
+            showModal({
+                title: 'Oops! Something went wrong',
+                message: 'We encountered an error while processing your request. Please try again.',
+                type: 'error',
+                confirmText: 'Got it'
+            });
+        }
+
+        function showWarningModal() {
+            showModal({
+                title: 'Are you sure?',
+                message: 'This action might have important consequences. Please review before proceeding.',
+                type: 'warning',
+                confirmText: 'I understand'
+            });
+        }
+
+        function showInfoModal() {
+            showModal({
+                title: 'Did you know?',
+                message: 'Central Adventures offers amazing trips across Kenya. Book your next adventure today!',
+                type: 'info',
+                confirmText: 'Learn more'
+            });
+        }
+
+        // Confirmation dialog
+        async function showConfirmDialog() {
+            const confirmed = await confirmAction({
+                title: 'Delete this item?',
+                message: 'This action cannot be undone. Are you sure you want to proceed?',
+                type: 'warning',
+                confirmText: 'Yes, delete it',
+                cancelText: 'No, keep it'
+            });
+
+            if (confirmed) {
+                showSuccess('Item deleted successfully');
+            } else {
+                showInfo('Action cancelled');
+            }
+        }
+
+        // Real-world simulations
+        function simulateLogin() {
+            showSuccess('Login successful! Redirecting to your dashboard...');
+        }
+
+        function simulateSignup() {
+            showModal({
+                title: 'Welcome to Central Adventures!',
+                message: 'Your account has been created successfully. Get ready to explore Kenya\'s amazing destinations!',
+                type: 'success',
+                confirmText: 'Let\'s Go!'
+            });
+        }
+
+        function simulateProfileUpdate() {
+            showModal({
+                title: 'Profile Updated!',
+                message: 'Your profile has been updated successfully.',
+                type: 'success',
+                confirmText: 'Continue'
+            });
+        }
+
+        function simulateContact() {
+            showSuccess('Message sent successfully! We\'ll get back to you soon.');
+        }
+    </script>
+{% endblock %}

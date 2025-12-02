@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Login - Central Adventures{% endblock %}
+{% block content %}
+    <div class="auth-container auth-page container-small">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1>Central Adventures</h1>
+                <h2>Welcome Back!</h2>
+                <p>Login to continue your adventure</p>
+                <div style="background: #FFF4E6; border-left: 4px solid #d97706; padding: 12px; margin-top: 15px; border-radius: 4px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #6B5639;">
+                        <strong>💡 First time?</strong> Please <a href="{% url 'signup' %}" style="color: #d97706; text-decoration: underline;">create an account</a> first, then login with your credentials.
+                    </p>
+                </div>
+            </div>
+
+            <form id="loginForm" class="auth-form" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="loginPassword" name="password" required placeholder="Enter your password">
+                        <button type="button" class="password-toggle" data-target="loginPassword">
+                            <span class="toggle-icon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="{% url 'signup' %}" class="link">Create one now</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endblock %}
+

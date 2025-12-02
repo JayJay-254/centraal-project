@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Bookings - Central Adventures{% endblock %}
+{% block content %}
+<section class="bookings-section container">
+    <h1>Bookings / Trips</h1>
+    <p>This is a placeholder bookings page. The `trips` context is available when logged in.</p>
+    {% if trips %}
+        <ul>
+        {% for trip in trips %}
+            <li>{{ trip.title|default:trip.pk }} — <a href="{% url 'trip_details' trip.id %}">details</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No trips available.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Trip Details - Central Adventures{% endblock %}
+{% block content %}
+<section class="trip-details container-small">
+    <h1>Trip Details</h1>
+    {% if trip %}
+        <h2>{{ trip.title|default:('Trip #' ~ trip.id) }}</h2>
+        <p>{{ trip.description|default:'No description available.' }}</p>
+        <p>Price: {{ trip.price|default:'TBD' }}</p>
+        <a href="{% url 'book' trip.id %}" class="btn btn-primary">Book this trip</a>
+    {% else %}
+        <p>Trip not found.</p>
+    {% endif %}
+</section>
+{% endblock %}

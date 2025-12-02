@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up - Central Adventures{% endblock %}
+{% block content %}
+<div class="auth-container signup-box container-small">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h1>Central Adventures</h1>
+            <h2>Join the Adventure!</h2>
+            <p>Create your account to get started</p>
+        </div>
+
+        <form id="signupForm" class="auth-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Profile Picture (Optional) -->
+            <div class="form-group">
+                <label for="profilePicture">Profile Picture (Optional)</label>
+                <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+                <div id="imagePreview" class="image-preview"></div>
+            </div>
+
+            <!-- Name Fields -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" name="firstName" required placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name *</label>
+                    <input type="text" id="lastName" name="lastName" required placeholder="Last name">
+                </div>
+            </div>
+
+            <!-- Username and Age -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" required placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age *</label>
+                    <input type="number" id="age" name="age" required min="18" max="100" placeholder="Age">
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="password" name="password" required placeholder="Create a password">
+                    <button type="button" class="password-toggle" data-target="password">
+                        <span class="toggle-icon">👁️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label for="confirmPassword">Re-enter Password *</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-enter your password">
+                    <button type="button" class="password-toggle" data-target="confirmPassword">
+                        <span class="toggle-icon">👁️</span>
+                    </button>
+                </div>
+                <span id="passwordMatch" class="password-match-indicator"></span>
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+                <label for="county">County *</label>
+                <select id="county" name="county" required>
+                    <option value="">Select your county</option>
+                </select>
+            </div>
+
+            <!-- Constituency -->
+            <div class="form-group">
+                <label for="constituency">Constituency *</label>
+                <select id="constituency" name="constituency" required disabled>
+                    <option value="">Select your constituency</option>
+                </select>
+            </div>
+
+            <!-- Bio -->
+            <div class="form-group">
+                <label for="bio">Bio (Optional)</label>
+                <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself and your adventure interests..."></textarea>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="form-group">
+                <label for="contactInfo">Contact Info (Optional)</label>
+                <input type="text" id="contactInfo" name="contactInfo" placeholder="Phone number or other contact">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{% url 'login' %}" class="link">Login here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block title %}Group Chat - Central Adventures{% endblock %}
+{% block content %}
+<section class="chat-section container-small">
+    <h1>Group Chat</h1>
+    <p>This is a simple placeholder for the chat room. Websocket chat requires Channels to be configured.</p>
+    <div id="chatMessages"></div>
+    <form id="chatForm">
+        <input id="chatInput" placeholder="Type a message..." autocomplete="off" />
+        <button type="submit">Send</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Gallery - Central Adventures{% endblock %}
+{% block content %}
+<section class="gallery-section container">
+    <h2 class="page-title">Gallery</h2>
+    <p class="page-subtitle">Memories from our adventures</p>
+
+    <div class="gallery-grid" id="galleryGrid">
+        <!-- Gallery images will be loaded dynamically from backend -->
+        <div class="empty-state">
+            <i class="fas fa-images" style="font-size: 4rem; color: var(--earth-brown); margin-bottom: 20px;"></i>
+            <p>Gallery photos will be managed by admins and displayed here.</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Photos from completed trips and adventures will appear in this space.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+</html>

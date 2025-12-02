@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block title %}Our Destinations - Central Adventures{% endblock %}
+{% block content %}
+<section class="destinations-section container">
+    <h2 class="page-title">Our Destinations</h2>
+    <p class="page-subtitle">Explore upcoming adventures across Kenya</p>
+
+    <div class="destinations-grid" id="destinationsGrid">
+        <!-- Destinations will be loaded dynamically from backend -->
+        <!-- Dummy data for frontend development -->
+        <div class="destination-card" data-destination="1" data-backend-id="">
+            <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?w=1200');">
+                <div class="destination-overlay">
+                    <h3 class="destination-title">Mount Kenya Expedition</h3>
+                    <p class="destination-description">Experience the thrill of climbing Africa's second-highest peak. This 5-day expedition takes you through diverse ecosystems...</p>
+                    <button class="btn btn-small view-details-btn">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="destination-card" data-destination="2" data-backend-id="">
+            <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200');">
+                <div class="destination-overlay">
+                    <h3 class="destination-title">Diani Beach Getaway</h3>
+                    <p class="destination-description">Relax on pristine white sands and crystal-clear waters. This 3-day coastal retreat includes snorkeling, beach games...</p>
+                    <button class="btn btn-small view-details-btn">View Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Destination Detail Modal -->
+    <div class="modal" id="destinationModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-body">
+                <div class="modal-image" id="modalImage"></div>
+                <div class="modal-details">
+                    <h2 id="modalTitle"></h2>
+                    <div class="detail-section">
+                        <h3>Description</h3>
+                        <p id="modalDescription"></p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Location</h3>
+                        <p id="modalLocation"></p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Duration</h3>
+                        <p id="modalDuration"></p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>What to Expect</h3>
+                        <p id="modalExpectations"></p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>What to Bring</h3>
+                        <p id="modalRequirements"></p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>Price</h3>
+                        <p id="modalPrice" class="price-tag"></p>
+                    </div>
+                    <button class="btn btn-primary btn-block">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

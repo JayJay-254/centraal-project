@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contactForm) {
         // Initialize EmailJS (user needs to add their own public key)
         if (typeof emailjs !== 'undefined') {
-            emailjs.init('q3_xN54dd37s7rGn1');
+            emailjs.init('k2Wl4wz0GgAQRBw1P');
         }
         
         contactForm.addEventListener('submit', function(e) {

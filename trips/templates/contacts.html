@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Contact Us - Central Adventures{% endblock %}
 {% block content %}
 <section class="contact-section container-small">
     <h2 class="page-title">Get in Touch</h2>
     <p class="page-subtitle">Have questions? We'd love to hear from you!</p>
+
+    <!-- Display messages -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <form id="contactForm" class="contact-form" method="post">
         {% csrf_token %}
@@ -31,4 +43,8 @@
         <button type="submit" class="btn btn-primary btn-block">Send Message</button>
     </form>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'js/contact-form.js' %}"></script>
 {% endblock %}

@@ -8,6 +8,8 @@ from .locations import KENYA_LOCATIONS
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Home page
 def home(request):
@@ -37,7 +39,38 @@ def contact_us(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Save the message to database
+            contact_message = form.save()
+            
+            # Send email to admin
+            subject = f"New Contact Message: {contact_message.subject}"
+            message_body = f"""
+You have received a new contact message from Central Adventures website.
+
+From: {contact_message.name}
+Email: {contact_message.email}
+Subject: {contact_message.subject}
+
+Message:
+{contact_message.message}
+
+---
+This message was sent via the contact form on the Central Adventures website.
+"""
+            
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message_body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.EMAIL_HOST_USER],
+                    fail_silently=False
+                )
+                messages.success(request, 'Thank you! Your message has been sent successfully.')
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+                messages.warning(request, 'Your message has been saved, but email notification failed.')
+            
             return redirect('home')
     else:
         form = ContactForm()

@@ -26,7 +26,7 @@
         {% if trips %}
             {% for trip in trips %}
             <div class="destination-card" data-trip-id="{{ trip.id }}">
-                <div class="destination-image" style="background-image: url('{% if trip.image_url.url %}{{ trip.image_url.url }}{% else %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200{% endif %}');">
+                <div class="destination-image" style="background-image: url('{% if trip.image_url %}{{ trip.image_url.url }}{% else %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200{% endif %}');">
                     <div class="trip-status-badge badge-{{ trip.status }}">{{ trip.get_status_display }}</div>
                     <div class="destination-overlay">
                         <h3 class="destination-title">{{ trip.title }}</h3>

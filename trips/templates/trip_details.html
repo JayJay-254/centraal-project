@@ -13,7 +13,7 @@
     {% if trip %}
     <div class="trip-detail-content">
         <div class="trip-main-image">
-            {% if trip.image_url.url %}
+            {% if trip.image_url %}
                 <img src="{{ trip.image_url.url }}" alt="{{ trip.title }}" class="detail-image">
             {% else %}
                 <div class="placeholder-image">No Image Available</div>
@@ -51,7 +51,7 @@
                 <div class="gallery-grid">
                     {% for image in trip.galleryimage_set.all %}
                         <div class="gallery-item">
-                            {% if image.image_url.url %}
+                            {% if image.image_url %}
                                 <img src="{{ image.image_url.url }}" alt="{{ image.caption }}" class="gallery-image">
                             {% endif %}
                             <p class="gallery-caption">{{ image.caption }}</p>

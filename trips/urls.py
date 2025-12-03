@@ -8,6 +8,7 @@ urlpatterns = [
     path('book/<int:id>/', views.book_trip, name='book'),
     path('group-chat/', views.chat_room, name='group_chat'),
     path('contact-us/', views.contact_us, name='contact_us'),
+    path('management/', views.management_page, name='management'),
     # Static/frontend templates routes
     path('login/', views.login_page, name='login'),
     path('logout/', views.logout_view, name='logout'),

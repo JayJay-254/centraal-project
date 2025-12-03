@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Trip, Booking, ChatMessage, UserProfile
+from .models import Trip, Booking, ChatMessage, UserProfile, TeamMember
 from .forms import ContactForm
 from .locations import KENYA_LOCATIONS
 from django.contrib.auth.models import User
@@ -283,3 +283,10 @@ def api_constituencies(request):
         constituencies = KENYA_LOCATIONS[county]
         return JsonResponse({'constituencies': constituencies})
     return JsonResponse({'constituencies': [], 'error': 'County not found'}, status=400)
+
+
+# Management/Leadership page
+def management_page(request):
+    """Display team members and leadership."""
+    team_members = TeamMember.objects.all()
+    return render(request, 'management.html', {'team_members': team_members})

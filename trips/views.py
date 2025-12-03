@@ -184,8 +184,11 @@ def signup_page(request):
 
     return render(request, "signup.html")
 
+@login_required
 def gallery_page(request):
-    return render(request, "gallery.html")
+    from .models import GalleryImage
+    gallery_images = GalleryImage.objects.all().order_by('-id')
+    return render(request, "gallery.html", {"gallery_images": gallery_images})
 
 def edit_profile_page(request):
     if not request.user.is_authenticated:

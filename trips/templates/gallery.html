@@ -6,13 +6,133 @@
     <p class="page-subtitle">Memories from our adventures</p>
 
     <div class="gallery-grid" id="galleryGrid">
-        <!-- Gallery images will be loaded dynamically from backend -->
-        <div class="empty-state">
-            <i class="fas fa-images" style="font-size: 4rem; color: var(--earth-brown); margin-bottom: 20px;"></i>
-            <p>Gallery photos will be managed by admins and displayed here.</p>
-            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Photos from completed trips and adventures will appear in this space.</p>
-        </div>
+        {% if gallery_images %}
+            {% for image in gallery_images %}
+            <div class="gallery-card">
+                <div class="gallery-item-wrapper">
+                    {% if image.image_url %}
+                        <img src="{{ image.image_url.url }}" alt="{{ image.caption }}" class="gallery-image">
+                    {% else %}
+                        <div class="no-image-placeholder">
+                            <i class="fas fa-image"></i> No Image
+                        </div>
+                    {% endif %}
+                    <div class="gallery-info">
+                        <p class="gallery-caption">{{ image.caption }}</p>
+                        {% if image.trip %}
+                            <p class="gallery-trip">
+                                <i class="fas fa-map-marker-alt"></i> 
+                                <a href="{% url 'trip_details' image.trip.id %}">{{ image.trip.title }}</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-images" style="font-size: 4rem; color: var(--earth-brown); margin-bottom: 20px;"></i>
+                <p>Gallery photos will be managed by admins and displayed here.</p>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Photos from completed trips and adventures will appear in this space.</p>
+            </div>
+        {% endif %}
     </div>
 </section>
+
+<style>
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.gallery-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.gallery-item-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 280px;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.no-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sand-light);
+    color: var(--text-muted);
+    font-size: 3rem;
+}
+
+.gallery-info {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid var(--sand-light);
+}
+
+.gallery-caption {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.gallery-trip {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.gallery-trip a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.gallery-trip a:hover {
+    text-decoration: underline;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .gallery-item-wrapper {
+        height: 200px;
+    }
+}
+</style>
 {% endblock %}
-</html>

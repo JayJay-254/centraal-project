@@ -28,9 +28,27 @@ class UserAdmin(DjangoUserAdmin):
 
 @admin.register(GalleryImage)
 class GalleryImageAdmin(admin.ModelAdmin):
-	list_display = ('id', 'trip', 'uploaded_by', 'caption', 'image_preview')
-	readonly_fields = ('image_preview',)
-	search_fields = ('trip__title', 'uploaded_by__username')
+	list_display = ('id', 'trip_display', 'uploaded_by', 'caption', 'image_preview')
+	readonly_fields = ('image_preview', 'uploaded_by')
+	search_fields = ('trip__title', 'uploaded_by__username', 'caption')
+	fieldsets = (
+		('Image Information', {
+			'fields': ('trip', 'image_url', 'caption')
+		}),
+		('Metadata', {
+			'fields': ('uploaded_by',),
+			'classes': ('collapse',)
+		}),
+	)
+
+	def trip_display(self, obj):
+		"""Display trip with type and status"""
+		if obj.trip:
+			trip_type = f" [{obj.trip.trip_type.get_name_display()}]" if obj.trip.trip_type else ""
+			status = f" - {obj.trip.get_status_display()}"
+			return f"{obj.trip.title}{trip_type}{status}"
+		return "No Trip"
+	trip_display.short_description = 'Trip'
 
 	def image_preview(self, obj):
 		if obj.image_url:
@@ -38,6 +56,12 @@ class GalleryImageAdmin(admin.ModelAdmin):
 		return ''
 	image_preview.allow_tags = True
 	image_preview.short_description = 'Preview'
+	
+	def save_model(self, request, obj, form, change):
+		"""Auto-set the uploaded_by field"""
+		if not change:
+			obj.uploaded_by = request.user
+		super().save_model(request, obj, form, change)
 
 
 @admin.register(Trip)

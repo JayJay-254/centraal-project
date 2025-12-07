@@ -694,7 +694,7 @@ def payment_page(request, trip_id):
             data = response.json()
 
             if data.get("ResponseCode") == "0":
-                message = "STK Push sent! Enter your M-Pesa PIN to complete payment."
+                message = f"Confirm to pay a road trip to {trip.title} for Central Adventures, then enter your M-Pesa PIN."
             else:
                 message = f"Payment request failed: {data.get('errorMessage', 'Unknown error')}"
 

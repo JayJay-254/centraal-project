@@ -15,7 +15,7 @@
     </form>
 
     {% if message %}
-        <p class="alert alert-info">{{ message }}</p>
+        <p class="alert alert-info" id="paymentAlert">{{ message }}</p>
     {% endif %}
 </section>
 
@@ -106,6 +106,18 @@
     color: #0369a1;
     font-weight: 500;
 }
+
+/* Hide alert after display (handled via JS) */
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const alertEl = document.getElementById('paymentAlert');
+    if (alertEl) {
+        setTimeout(() => {
+            alertEl.style.display = 'none';
+        }, 5000);
+    }
+});
+</script>
 {% endblock %}
 

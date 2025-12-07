@@ -667,15 +667,15 @@ def payment_page(request, trip_id):
             access_token = get_mpesa_token()
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
             
-            # For Buy Goods, use Till Number as shortcode (no password needed)
+            # Sandbox uses PayBill (174379), Production uses your Till Number
             stk_request = {
-                "BusinessShortCode": "174379",  # Use Safaricom's Head Office Shortcode for Buy Goods
+                "BusinessShortCode": "174379",
                 "Password": b64encode(f"174379{settings.MPESA_PASSKEY}{timestamp}".encode()).decode(),
                 "Timestamp": timestamp,
-                "TransactionType": "CustomerBuyGoodsOnline",
+                "TransactionType": "CustomerPayBillOnline",  # Use PayBill for sandbox testing
                 "Amount": amount,
                 "PartyA": phone,
-                "PartyB": settings.MPESA_SHORTCODE,  # Your Till Number here
+                "PartyB": "174379",
                 "PhoneNumber": phone,
                 "CallBackURL": settings.MPESA_CALLBACK_URL,
                 "AccountReference": f"TRIP-{trip_id}",

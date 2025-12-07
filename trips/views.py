@@ -672,10 +672,10 @@ def payment_page(request, trip_id):
                 "BusinessShortCode": settings.MPESA_SHORTCODE,
                 "Password": password,
                 "Timestamp": timestamp,
-                "TransactionType": "CustomerPayBillOnline",
+                "TransactionType": "CustomerBuyGoodsOnline",  # Changed for Till Number
                 "Amount": amount,
                 "PartyA": phone,
-                "PartyB": settings.MPESA_SHORTCODE,
+                "PartyB": settings.MPESA_SHORTCODE,  # Your Till Number
                 "PhoneNumber": phone,
                 "CallBackURL": settings.MPESA_CALLBACK_URL,
                 "AccountReference": f"TRIP-{trip_id}",

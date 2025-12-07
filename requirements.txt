@@ -10,3 +10,5 @@ django-storages[boto3]
 boto3
 Pillow
 requests
+cloudinary
+django-cloudinary-storage

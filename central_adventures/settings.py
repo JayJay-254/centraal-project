@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'trips',
-    'channels'
+    'channels',
+    # Media storage backends (conditionally used via env flags)
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -170,10 +173,12 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'centraladventurers@gm
 
 # Additional production guidance: ensure SECRET_KEY and DEBUG are set in env.
 
-# S3 Media Storage (optional for production)
-# If AWS_STORAGE_BUCKET_NAME env var is set, use S3 for media uploads
-# This ensures uploaded images/videos persist across deployments
-if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
+# Media storage strategy (priority: Cloudinary > S3 > Render Disk > local)
+if os.environ.get('CLOUDINARY_URL'):
+    # Use Cloudinary when CLOUDINARY_URL is provided
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_URL = os.environ.get('cloudinary://<211783149915516>:<ae1-lQyXjqA1d8haAZss2EgSKGE>@djgmssp1f')
+elif os.environ.get('AWS_STORAGE_BUCKET_NAME'):
     # Use S3 for media storage in production
     INSTALLED_APPS.append('storages')
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

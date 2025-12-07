@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -167,9 +169,10 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Use environment variables in production for security
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'centraladventurers@gmail.com')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'njengajackson40@gmail.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'nkcq zufg affl dcjq')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'centraladventurers@gmail.com')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'njeengajackson40@gmail.com')
+CONTACT_NOTIFICATION_EMAIL = os.environ.get('CONTACT_NOTIFICATION_EMAIL', DEFAULT_FROM_EMAIL)
 
 # Additional production guidance: ensure SECRET_KEY and DEBUG are set in env.
 

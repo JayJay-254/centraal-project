@@ -429,55 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Contact Form with EmailJS
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        // Initialize EmailJS (user needs to add their own public key)
-        if (typeof emailjs !== 'undefined') {
-            emailjs.init('k2Wl4wz0GgAQRBw1P');
-        }
-        
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            
-            // Disable submit button
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            // Prepare template parameters
-            const templateParams = {
-                from_name: document.getElementById('contactName').value,
-                from_email: document.getElementById('contactEmail').value,
-                subject: document.getElementById('contactSubject').value,
-                message: document.getElementById('contactMessage').value
-            };
-            
-            // Send email using EmailJS
-            if (typeof emailjs !== 'undefined') {
-                emailjs.send('service_t9bdrid', 'template_jq7oqec', templateParams)
-                    .then(function(response) {
-                        showSuccess('Message sent successfully! We\'ll get back to you soon.');
-                        contactForm.reset();
-                    }, function(error) {
-                        showError('Failed to send message. Please try again or contact us directly via phone.');
-                        console.error('EmailJS error:', error);
-                    })
-                    .finally(function() {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Send Message';
-                    });
-            } else {
-                // EmailJS not loaded, show success anyway for demo
-                setTimeout(() => {
-                    showSuccess('Message sent successfully! We\'ll get back to you soon.');
-                    contactForm.reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Send Message';
-                }, 1000);
-            }
-        });
-    }
+    // Contact Form handling lives in trips/static/js/contact-form.js via Formspree
 
 }); // End of DOMContentLoaded

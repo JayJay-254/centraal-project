@@ -327,8 +327,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Prefer hidden field; fallback to cookie
+    const csrfToken = document.getElementById('csrfTokenField')?.value || getCookie('csrftoken') || '';
     const galleryCards = document.querySelectorAll('.gallery-card');
-    const csrfToken = document.getElementById('csrfTokenField').value;
 
     
     galleryCards.forEach(card => {
@@ -424,6 +425,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const commentsList = card.querySelector('.comments-list');
                 commentsList.innerHTML = '';
                 
+
+                // Helper: get cookie by name (csrf fallback)
+                function getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                    return '';
+                }
                 data.comments.forEach(comment => {
                     const commentDiv = document.createElement('div');
                     commentDiv.className = 'comment-item';
@@ -477,8 +486,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <div class="comment-text">${reply.comment}</div>
                                         <div class="comment-time" style="font-size: 0.7rem;">${reply.time}</div>
                                         <div class="comment-reactions" style="margin-top: 5px;">
-                                            <span style="font-size: 0.8rem;">👍 ${reply.likes}</span>
-                                            <span style="font-size: 0.8rem;">👎 ${reply.dislikes}</span>
+                                            <button class="react-btn reply-like" data-status="${reply.user_like_status === 'like' ? 'active' : ''}">👍 <span>${reply.likes}</span></button>
+                                            <button class="react-btn reply-dislike" data-status="${reply.user_like_status === 'dislike' ? 'active' : ''}">👎 <span>${reply.dislikes}</span></button>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -510,6 +519,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const replySection = commentDiv.querySelector('.reply-section');
                     const submitReplyBtn = commentDiv.querySelector('.submit-reply');
                     const replyInput = commentDiv.querySelector('.reply-input');
+                    const replyLikeButtons = commentDiv.querySelectorAll('.reply-like');
+                    const replyDislikeButtons = commentDiv.querySelectorAll('.reply-dislike');
                     
                     likeBtn.addEventListener('click', () => toggleCommentLike(comment.id, true, likeBtn, dislikeBtn, csrfToken));
                     dislikeBtn.addEventListener('click', () => toggleCommentLike(comment.id, false, dislikeBtn, likeBtn, csrfToken));
@@ -539,6 +550,22 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         });
                     }
+
+                    // Reply like/dislike
+                    replyLikeButtons.forEach((btn, idx) => {
+                        const replyId = comment.replies[idx]?.id;
+                        const other = replyDislikeButtons[idx];
+                        if (replyId) {
+                            btn.addEventListener('click', () => toggleCommentLike(replyId, true, btn, other, csrfToken));
+                        }
+                    });
+                    replyDislikeButtons.forEach((btn, idx) => {
+                        const replyId = comment.replies[idx]?.id;
+                        const other = replyLikeButtons[idx];
+                        if (replyId) {
+                            btn.addEventListener('click', () => toggleCommentLike(replyId, false, btn, other, csrfToken));
+                        }
+                    });
                 });
             });
     }

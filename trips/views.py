@@ -443,6 +443,10 @@ def get_comments(request, image_id):
 
             reply_likes = reply.likes.filter(is_like=True).count()
             reply_dislikes = reply.likes.filter(is_like=False).count()
+            reply_user_like = reply.likes.filter(user=request.user).first()
+            reply_user_like_status = None
+            if reply_user_like:
+                reply_user_like_status = 'like' if reply_user_like.is_like else 'dislike'
 
             replies_data.append({
                 'id': reply.id,
@@ -452,7 +456,8 @@ def get_comments(request, image_id):
                 'time': reply.time.strftime('%b %d, %Y %H:%M'),
                 'is_owner': reply.user == request.user,
                 'likes': reply_likes,
-                'dislikes': reply_dislikes
+                'dislikes': reply_dislikes,
+                'user_like_status': reply_user_like_status
             })
 
         comments_data.append({

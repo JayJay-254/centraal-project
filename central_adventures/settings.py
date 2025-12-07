@@ -148,9 +148,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # WhiteNoise static files storage (production)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (user-uploaded)
+# Media files (user-uploaded) - configured below with S3/Render persistent disk support
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -160,27 +159,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Email Configuration
 # For production, set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD via environment variables
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.send.gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'centraladventurers@gmail.com'
-EMAIL_HOST_PASSWORD = 'nkcq zufg affl dcjq'
-DEFAULT_FROM_EMAIL =  'centraladventurers@gmail.com'
+# Use environment variables in production for security
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'centraladventurers@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'nkcq zufg affl dcjq')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'centraladventurers@gmail.com')
 
 # Additional production guidance: ensure SECRET_KEY and DEBUG are set in env.
 
 # S3 Media Storage (optional for production)
 # If AWS_STORAGE_BUCKET_NAME env var is set, use S3 for media uploads
+# This ensures uploaded images/videos persist across deployments
 if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
+    # Use S3 for media storage in production
+    INSTALLED_APPS.append('storages')
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
     AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = 'public-read'
     # Optionally set a custom domain for S3 CDN
     # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+elif os.environ.get('RENDER_PERSISTENT_DISK_PATH'):
+    # Use Render persistent disk if available
+    MEDIA_ROOT = os.environ.get('RENDER_PERSISTENT_DISK_PATH') + '/media'
+else:
+    # Development: use local media folder
+    MEDIA_ROOT = BASE_DIR / 'media'
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 MPESA_CONSUMER_KEY = "XzXLAmwabVP8gMcyNSLnRFeEEKAK8C4L5XzhvfMVnbPSTEIo"
 MPESA_CONSUMER_SECRET = "RXagehIrjVPEhStcuQEx4tFjC14NY50E8eJ1pznDBuMCjoEUTmiYAyApvlzYpF81"

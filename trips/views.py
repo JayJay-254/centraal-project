@@ -25,6 +25,21 @@ from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
+# M-Pesa Helper Function
+def get_mpesa_token():
+    """Get M-Pesa access token"""
+    consumer_key = settings.MPESA_CONSUMER_KEY
+    consumer_secret = settings.MPESA_CONSUMER_SECRET
+    api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
+    
+    try:
+        response = requests.get(api_url, auth=(consumer_key, consumer_secret), timeout=10)
+        response.raise_for_status()
+        return response.json()['access_token']
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to get M-Pesa token: {e}")
+        raise Exception(f"Failed to authenticate with M-Pesa: {str(e)}")
+
 # Home page
 def home(request):
     return render(request, "index.html")
@@ -462,11 +477,10 @@ def get_comments(request, image_id):
 @login_required
 def add_comment(request, image_id):
     if request.method == "POST":
-        logger.debug(f"Incoming POST data: {request.POST}")
-        # Ensure the text field is provided and not empty
-        text = request.POST.get("text", "").strip()
+        # Accept 'comment' field from form data
+        text = request.POST.get("comment", "").strip()
         if not text:
-            return JsonResponse({"status": "error", "message": "Comment text cannot be empty."}, status=400)
+            return JsonResponse({"success": False, "message": "Comment text cannot be empty."}, status=400)
 
         image = get_object_or_404(GalleryImage, id=image_id)
 
@@ -477,16 +491,23 @@ def add_comment(request, image_id):
             comment=text
         )
 
+        avatar = ''
+        if hasattr(comment.user, 'profile') and comment.user.profile.profile_picture:
+            avatar = comment.user.profile.profile_picture.url
+
         # Return the created comment data
         return JsonResponse({
-            "status": "success",
+            "success": True,
             "comment": {
                 "id": comment.id,
                 "username": comment.user.username,
+                "avatar": avatar,
                 "comment": comment.comment,
                 "time": comment.time.strftime('%b %d, %Y %H:%M'),
+                "is_owner": True,
                 "likes": 0,
                 "dislikes": 0,
+                "user_like_status": None,
                 "replies": []
             }
         })

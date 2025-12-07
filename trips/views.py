@@ -666,16 +666,16 @@ def payment_page(request, trip_id):
         try:
             access_token = get_mpesa_token()
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            password = b64encode(f"{settings.MPESA_SHORTCODE}{settings.MPESA_PASSKEY}{timestamp}".encode()).decode()
-
+            
+            # For Buy Goods, use Till Number as shortcode (no password needed)
             stk_request = {
-                "BusinessShortCode": settings.MPESA_SHORTCODE,
-                "Password": password,
+                "BusinessShortCode": "174379",  # Use Safaricom's Head Office Shortcode for Buy Goods
+                "Password": b64encode(f"174379{settings.MPESA_PASSKEY}{timestamp}".encode()).decode(),
                 "Timestamp": timestamp,
-                "TransactionType": "CustomerBuyGoodsOnline",  # Changed for Till Number
+                "TransactionType": "CustomerBuyGoodsOnline",
                 "Amount": amount,
                 "PartyA": phone,
-                "PartyB": settings.MPESA_SHORTCODE,  # Your Till Number
+                "PartyB": settings.MPESA_SHORTCODE,  # Your Till Number here
                 "PhoneNumber": phone,
                 "CallBackURL": settings.MPESA_CALLBACK_URL,
                 "AccountReference": f"TRIP-{trip_id}",

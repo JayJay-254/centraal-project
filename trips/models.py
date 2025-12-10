@@ -107,7 +107,6 @@ class AdminRole(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
-# Updated GalleryImage model to ensure images persist across updates
 class GalleryImage(models.Model):
     MEDIA_TYPE_CHOICES = [
         ('image', 'Image'),
@@ -124,7 +123,6 @@ class GalleryImage(models.Model):
     
     class Meta:
         ordering = ['-created_at']
-        # Ensure images are not deleted when the code is updated
         managed = False
     
     def __str__(self):
@@ -148,7 +146,6 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.user.username} likes {self.image}"
 
-# Updated Comment model to support image comments
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     image = models.ForeignKey(GalleryImage, on_delete=models.CASCADE, related_name='comments')
@@ -171,7 +168,7 @@ class Comment(models.Model):
 class CommentLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes')
-    is_like = models.BooleanField(default=True)  # True = like/thumbs up, False = dislike/thumbs down
+    is_like = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -212,7 +209,6 @@ class TeamMember(models.Model):
         return f"{self.name} - {self.position}"
 
 
-# Optional user profile for storing extra signup details
 class UserProfile(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='profile')
     age = models.PositiveIntegerField(null=True, blank=True)
@@ -232,7 +228,7 @@ class SentEmail(models.Model):
     subject = models.CharField(max_length=200)
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=50)  # e.g., 'sent', 'failed'
+    status = models.CharField(max_length=50) 
 
     def __str__(self):
         return f"Email '{self.subject}' to {self.sender_email} at {self.sent_at}"

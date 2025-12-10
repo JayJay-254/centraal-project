@@ -14,19 +14,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# Read secret key from env, fall back to development key for local dev
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rg8e*q3s9dx%0w)9h#u*)7fjw8c$9db9(-in4lf9pc$zl&_81k')
 
-# DEBUG should be False in production. Control via environment variable.
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Allowed hosts default to all for simple deploy; override with env var for security.
@@ -168,21 +161,16 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# Use environment variables in production for security
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'njengajackson40@gmail.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'nkcq zufg affl dcjq')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'njeengajackson40@gmail.com')
 CONTACT_NOTIFICATION_EMAIL = os.environ.get('CONTACT_NOTIFICATION_EMAIL', DEFAULT_FROM_EMAIL)
 
-# Additional production guidance: ensure SECRET_KEY and DEBUG are set in env.
 
-# Media storage strategy (priority: Cloudinary > S3 > Render Disk > local)
 if os.environ.get('CLOUDINARY_URL'):
-    # Use Cloudinary when CLOUDINARY_URL is provided
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     CLOUDINARY_URL = os.environ.get('cloudinary://<211783149915516>:<ae1-lQyXjqA1d8haAZss2EgSKGE>@djgmssp1f')
 elif os.environ.get('AWS_STORAGE_BUCKET_NAME'):
-    # Use S3 for media storage in production
     INSTALLED_APPS.append('storages')
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -192,19 +180,16 @@ elif os.environ.get('AWS_STORAGE_BUCKET_NAME'):
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = 'public-read'
-    # Optionally set a custom domain for S3 CDN
-    # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
 elif os.environ.get('RENDER_PERSISTENT_DISK_PATH'):
-    # Use Render persistent disk if available
     MEDIA_ROOT = os.environ.get('RENDER_PERSISTENT_DISK_PATH') + '/media'
 else:
-    # Development: use local media folder
     MEDIA_ROOT = BASE_DIR / 'media'
     os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 MPESA_CONSUMER_KEY = "NoEyrOVlgQLUHZw0ErjqKSyDLNLvsfTePNLAlYsZ7cEjfO12"
 MPESA_CONSUMER_SECRET = "puAlkQ1eClDA70xIh8i2SepVrcymzfom33haAHmEBHrYWGuAV26f1QSaZcrHacB0"
-MPESA_SHORTCODE = "4453846"  # Your Till Number goes here
+MPESA_SHORTCODE = "4453846"
 MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
 
 MPESA_CALLBACK_URL = "https://centraladventures.com/mpesa/callback/"

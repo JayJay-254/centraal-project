@@ -327,7 +327,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Prefer hidden field; fallback to cookie
     const csrfToken = document.getElementById('csrfTokenField')?.value || getCookie('csrftoken') || '';
     const galleryCards = document.querySelectorAll('.gallery-card');
 
@@ -496,7 +495,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     commentsList.appendChild(commentDiv);
                     
-                    // Attach event listeners to dynamically created elements
                     if (comment.is_owner) {
                         const menuBtn = commentDiv.querySelector('.comment-menu-btn');
                         const dropdown = commentDiv.querySelector('.comment-menu-dropdown');
@@ -652,7 +650,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-    // Get CSRF token from cookie
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from .models import UserProfile, AdminRole, GalleryImage, Trip, Booking, TeamMember, TripType, TripCategory, Like, Comment, CommentLike
+from .models import UserProfile, AdminRole, GalleryImage, Trip, Booking, TeamMember, TripType, TripCategory, Like, Comment, CommentLike, ContactMessage
 from .models import SentEmail
 
 
@@ -106,10 +106,6 @@ class BookingAdmin(admin.ModelAdmin):
     list_filter = ("status",)
     search_fields = ("user__username", "trip__title", "mpesa_receipt")
 
-# admin.site.register(Booking, BookingAdmin)
-
-
-
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):
 	list_display = ('name', 'position', 'contact', 'order')
@@ -184,8 +180,10 @@ class CommentLikeAdmin(admin.ModelAdmin):
 		return '👍 Like' if obj.is_like else '👎 Dislike'
 	like_type.short_description = 'Type'
 
-@admin.register(SentEmail)
-class SentEmailAdmin(admin.ModelAdmin):
-    list_display = ('tag', 'sender_name', 'sender_email', 'subject', 'sent_at', 'status')
-    list_filter = ('tag', 'status', 'sent_at')
-    search_fields = ('sender_name', 'sender_email', 'subject', 'message')
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'submitted_at')
+    list_filter = ('submitted_at',)
+    search_fields = ('name', 'email', 'subject', 'message')
+    readonly_fields = ('submitted_at',)
